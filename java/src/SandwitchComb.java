@@ -1,4 +1,5 @@
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class SandwitchComb{
@@ -28,15 +29,16 @@ public class SandwitchComb{
                 while( layerNum - 1 > 0 ){
                     List<String> newComb = new ArrayList<>();
                     for( String o: rt ){
-                        Character oldType = ingrToType.get( o.charAt( o.length() - 1 ) );
+                        Character prevType = ingrToType.get( o.charAt( o.length() - 1 ) );
                         typeToIngredients.forEach( ( k, v ) -> {
-                            if( oldType.charValue() != k ){
+                            if( prevType.charValue() != k ){
                                 v.forEach( nI -> {
                                     System.out.println( "[" + o + "]" + nI );
                                     newComb.add( o + nI );
                                 } );
                             }
                         } );
+                        //abandon the prev
                         rt = newComb;
                     }
                     layerNum--;

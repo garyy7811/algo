@@ -1,4 +1,5 @@
 import java.util.LinkedList;
+import java.util.Stack;
 
 /**
  * User: GaryY
@@ -58,7 +59,7 @@ public class AllEdgesPath{
     }
 
 
-    private static LinkedList<String> depth = new LinkedList<>();
+    private static Stack<String> depth = new Stack<>();
 
     private static void print( Object a ){
         System.out.println( depth.toString() + a.toString() );

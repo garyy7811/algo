@@ -25,19 +25,17 @@ public class QuickSort{
         }
     }
 
-    public static int findKthLargest( int[] nums, int k, int rFrom, int rTo ){
+    public static int findKthLargest( final int[] nums, final int k, final int orgF, final int orgT ){
 //        System.out.println( ">>>" + Arrays.toString( nums ) + ";from:" + rFrom + ";to:" + rTo );
-        if( rTo - rFrom < 5 ){
-            Arrays.sort( nums, rFrom, rTo + 1 );
+        if( orgT - orgF < 5 ){
+            Arrays.sort( nums, orgF, orgT + 1 );
             return nums[ nums.length - k ];
         }
-        int orgF = rFrom;
-        int orgT = rTo;
 
-        int pIdx = rFrom;
-        rFrom++;
+        int rFrom = orgF + 1;
+        int rTo = orgT;
 
-        int pValue = nums[ pIdx ];
+        int pValue = nums[ orgF ];
         while( true ){
             while( nums[ rFrom ] <= pValue && rFrom < rTo ){
                 rFrom++;
@@ -55,7 +53,7 @@ public class QuickSort{
         }
 
         if( pValue > nums[ rTo ] ){
-            nums[ pIdx ] = nums[ rTo ];
+            nums[ orgF ] = nums[ rTo ];
             nums[ rTo ] = pValue;
         }
 
