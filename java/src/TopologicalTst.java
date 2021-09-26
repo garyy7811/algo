@@ -87,6 +87,12 @@ public class TopologicalTst{
         public String name;
         public Set<Node> dependencies;
 
+        @Override
+        public String toString(){
+            return "Node{" +
+                    "name='" + name +
+                    '}';
+        }
     }
 
 }

@@ -1,20 +1,22 @@
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Knapsack{
 
     public static void main( String[] args ){
         HashMap<Integer, Integer> weightToValue = new HashMap<>();
         weightToValue.put( 2, 3 );
-        weightToValue.put( 3, 6 );
-        weightToValue.put( 4, 7 );
-        weightToValue.put( 5, 11 );
+        weightToValue.put( 3, 7 );
+        weightToValue.put( 4, 9 );
+        weightToValue.put( 5, 10 );
 
-        int rslt = maxValueWithLeastWeightBottomUp( 8, weightToValue );
-//        int rslt = maxValueWithLeastWeight2( 8, weightToValue );
+//        int rslt = maxValueWithLeastWeightBottomUp( 8, weightToValue );
+//        int rslt = maxValueWithLeastWeight1( 8, weightToValue );
+        int rslt = maxValueWithLeastWeight2( 8, weightToValue );
         System.out.println( rslt + "<<<" + MAX_DEPTH );
 
     }
+
+
 
 
     private static int maxValueWithLeastWeightBottomUp( int limit, HashMap<Integer, Integer> weightToValue ){
@@ -103,40 +105,24 @@ public class Knapsack{
         ArrayList<Integer> lst = new ArrayList<>( weightToValue.keySet() );
 //        Collections.sort( lst );
 //        Collections.reverse( lst );
-        List<Integer> integers = maxValCombWithLess( limit, lst, weightToValue, lst.size() );
-        return integers.stream().mapToInt( weightToValue::get ).sum();
-//        return maxValWithLess( limit, lst, weightToValue, lst.size() );
+//        List<Integer> integers = maxValueWithLeastWeight222( limit, lst, weightToValue );
+//        return integers.stream().mapToInt( weightToValue::get ).sum();
+        return maxValWithLess( limit, lst, weightToValue );
     }
 
-    private static int maxValWithLess( int limit, ArrayList<
-            Integer> lst, HashMap<Integer, Integer> weightToValue, int size ){
-        print( 1, "limit:" + limit + ">>>>>>>>>>size:" + size + ">>>>" + lst );
+    private static List<Integer> maxValueWithLeastWeight222( int limit, List<Integer> lst, HashMap<Integer, Integer> weightToValue ){
 
+        int size = lst.size();
         if( size == 0 || limit <= 0 ){
-            print( - 1, "limit:" + limit + "<<<<<<<<<<size:" + size + ",rtVal: 00" );
-            return 0;
-        }
+            print( - 1, "limit:" + limit + "<<<<<<<<<<" );
 
-        int maxValExcludeLast = maxValWithLess( limit, lst, weightToValue, size - 1 );
-
-        Integer lastWeight = lst.get( size - 1 );
-        int maxValIncludeLast = lastWeight > limit ? 0 : weightToValue.get( lastWeight ) + maxValWithLess( limit - lastWeight, lst, weightToValue, size - 1 );
-        int rt = Math.max( maxValIncludeLast, maxValExcludeLast );
-        print( - 1, "limit:" + limit + "<<<<<<<<<<size:" + size + "<<<<" + lst + "<<<lastweight:" + lastWeight + ", maxValExcludeLast:" + maxValExcludeLast + ", maxValIncludeLast:" + maxValIncludeLast + ", rtVal:" + rt );
-        return rt;
-    }
-
-
-    private static List<Integer> maxValCombWithLess( int limit, ArrayList<
-            Integer> lst, HashMap<Integer, Integer> weightToValue, int size ){
-        print( 1, "limit:" + limit + ">>>>>>>>>>size:" + size + ">>>>" + lst );
-
-        if( size == 0 || limit <= 0 ){
-            print( - 1, "limit:" + limit + "<<<<<<<<<<size:" + size + ",rtVal: 00" );
+            Set<Integer> ss = new HashSet<>();
             return new ArrayList<>();
         }
+        List<Integer> subLst = lst.subList( 0, size - 1 );
+        print( 1, "limit:" + limit + ">>>>>>>>>>lst>>>>" + subLst );
 
-        List<Integer> maxValExcludeLastLst = maxValCombWithLess( limit, lst, weightToValue, size - 1 );
+        List<Integer> maxValExcludeLastLst = maxValueWithLeastWeight222( limit, subLst, weightToValue );
 
         int maxValExcludeLast = maxValExcludeLastLst.stream().mapToInt( weightToValue::get ).sum();
 
@@ -145,15 +131,34 @@ public class Knapsack{
             print( - 1, "limit:" + limit + "<<<<<<<<<<size:" + size + ", lw:" + lastWeight + ",rtVal: " + maxValExcludeLast );
             return maxValExcludeLastLst;
         }
-        List<Integer> excluLessLst = maxValCombWithLess( limit - lastWeight, lst, weightToValue, size - 1 );
+        List<Integer> excluLessLst = maxValueWithLeastWeight222( limit - lastWeight, subLst, weightToValue );
         int maxValIncludeLast = weightToValue.get( lastWeight ) + excluLessLst.stream().mapToInt( weightToValue::get ).sum();
         excluLessLst.add( lastWeight );
 
         List<Integer> rt = ( maxValExcludeLast > maxValIncludeLast ) ? maxValExcludeLastLst : excluLessLst;
 
-        print( - 1, "limit:" + limit + "<<<<<<<<<<size:" + size + "<<<<" + lst + "<<<lastweight:"
+        print( - 1, "limit:" + limit + "<<<<<<<<<<size:" + size + "<<<<" + subLst + "<<<lastweight:"
                 + lastWeight + ", maxValExcludeLast:" + maxValExcludeLast + ", maxValIncludeLast:" + maxValIncludeLast
                 + ", rtVal:" + rt + "::" + Math.max( maxValExcludeLast, maxValIncludeLast ) );
+        return rt;
+    }
+
+
+    private static int maxValWithLess( int limit, List<
+            Integer> lst, HashMap<Integer, Integer> weightToValue ){
+        print( 1, "limit:" + limit + ">>>>>>>>>>>>>>" + lst );
+
+        if( lst.size() == 0 || limit <= 0 ){
+            print( - 1, "limit:" + limit + "<<<<<<<<<<size:" + lst.size() + ",rtVal: 00" );
+            return 0;
+        }
+
+        int maxValExcludeLast = maxValWithLess( limit, lst.subList( 0, lst.size() - 1 ), weightToValue );
+
+        Integer lastWeight = lst.get( lst.size() - 1 );
+        int maxValIncludeLast = lastWeight > limit ? 0 : weightToValue.get( lastWeight ) + maxValWithLess( limit - lastWeight, lst, weightToValue );
+        int rt = Math.max( maxValIncludeLast, maxValExcludeLast );
+        print( - 1, "limit:" + limit + "<<<<<<<<<<<<<<" + lst + "<<<lastweight:" + lastWeight + ", maxValExcludeLast:" + maxValExcludeLast + ", maxValIncludeLast:" + maxValIncludeLast + ", rtVal:" + rt );
         return rt;
     }
 

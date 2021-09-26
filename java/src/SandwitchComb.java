@@ -1,9 +1,11 @@
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class SandwitchComb{
 
     public static void main( String[] args ){
+
         class Solution1{
             private Map<Character, Set<Character>> typeToIngredients;
 
@@ -96,6 +98,53 @@ public class SandwitchComb{
         System.out.println( "-------------------------------------" );
         System.out.println( rslt2 );
 
+        class Solution3{
+
+            public Solution3(){
+                String num = "123";
+                String chr = "abc";
+                String sybl = "!@#";
+                String[] all = new String[]{ num, chr, sybl };
+                for( String s: all ){
+                    for( int i = 0; i < s.length(); i++ ){
+                        ingreToType.put( Character.valueOf( s.charAt( i ) ), s );
+                    }
+                }
+            }
+
+            private Map<Character, String> ingreToType = new HashMap<>();
+
+            public String[] getAllComb( int limit ){
+
+
+                List<String> rslt = new ArrayList<>();
+                getAllComb( new StringBuilder(), rslt, limit );
+
+                return rslt.toArray( new String[ 0 ] );
+            }
+
+            private void getAllComb( StringBuilder sb, List<String> rslt, int limit ){
+                if( sb.length() == limit ){
+                    String snb = sb.toString();
+                    rslt.add( snb );
+                    System.out.println( ">>>>>>>>>>>>>>>>>>>>>" + snb );
+                    return;
+                }
+
+                String lct = sb.length()>0?ingreToType.get( sb.charAt( sb.length() - 1 ) ):null;
+                Stream<String> nextTypes = ingreToType.values().stream().filter( v -> ! v.equals( lct ) );
+                nextTypes.forEach( t -> {
+                    for( int i = 0; i < t.length(); i++ ){
+                        sb.append( t.charAt( i ) );
+                        getAllComb( sb, rslt, limit );
+                        sb.deleteCharAt( sb.length() - 1 );
+                    }
+                } );
+            }
+
+        }
+
+        new Solution3().getAllComb( 5 );
 
     }
 }
